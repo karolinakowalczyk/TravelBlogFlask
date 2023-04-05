@@ -1,0 +1,27 @@
+.main-image {
+    width: 100%;
+    height: auto;
+}
+
+.cropped {
+    overflow: hidden;
+}
+
+h1 {
+    color: var(--primary);
+    font-family: 'Playfair Display', serif;
+}
+
+@media screen and (min-width: 768px) {
+    .half {
+        width: 50%;
+    }
+}
+
+.first {
+    background-color: brown;
+}
+
+.second {
+    background-color: blueviolet;
+}

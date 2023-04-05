@@ -22,5 +22,6 @@ htmlcov/
 .coverage
 .coverage.*
 *,cover
+node_modules/
 
 src/config.py
