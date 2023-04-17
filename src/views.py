@@ -4,9 +4,11 @@ from .firebaseConfig import getAuth
 
 @app.route("/", methods=['POST', 'GET'])
 def home():
+    loggedUser = False
     if('user' in session):
         print('Hi, {}'.format(session['user']))
-    return render_template('home.html')
+        loggedUser = True
+    return render_template('home.html', loggedUser=loggedUser)
 
 @app.route("/register", methods=['POST', 'GET'])
 def register():

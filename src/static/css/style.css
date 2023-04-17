@@ -6,8 +6,13 @@ html * {
     font-family: 'Sen', Arial, sans-serif;
 }
 
+
 .navbar .navbar-brand {
     color: var(--primary);
     font-family: 'Playfair Display', serif;
     font-size: 1.375rem;
+}
+
+#site-body {
+    margin-top: 140px;
 }
