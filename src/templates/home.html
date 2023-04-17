@@ -6,15 +6,16 @@ Home
 <div>
     <img src="{{ url_for('static', filename='images/pexels-jarod-barton.jpg')}}" class="main-image">
 </div>
-<div class="d-flex">
-    <div class="half first cropped">
+<div class="d-flex content-div">
+    <div class="half cropped">
         <img src="{{ url_for('static', filename='images/pexels-tranmautritam.jpg')}}" class="sub-image main-image">
     </div>
-    <div class="half second">
-        <h1>WELCOME TO 360 <span>&#176;</span> TRAVEL INSPIRATIONS</h1>
-        <p>You're travel lover? It's perfect place for you! This blog is about my travel experiences and tips. Do you
+    <div class="half second d-flex flex-column justify-content-center">
+        <h1>WELCOME TO <br /> 360 <span>&#176;</span> TRAVEL <br /> INSPIRATIONS</h1>
+        <p class="mt-5">You're travel lover? It's perfect place for you! This blog is about my travel experiences and
+            tips. Do you
             want to join this trip?</p>
-        <button>Expole the Blog</button>
+        <button class="p-3 mt-5 main-btn">Expole the Blog</button>
     </div>
 </div>
 

@@ -12,16 +12,41 @@ h1 {
     font-family: 'Playfair Display', serif;
 }
 
-@media screen and (min-width: 768px) {
+.main-btn {
+    background-color: var(--primary);
+    color: white;
+    width: 10rem;
+    border: none;
+}
+
+/* @media screen and (min-width: 768px) {
     .half {
         width: 50%;
     }
+} */
+
+.half {
+    width: 50%;
 }
 
-.first {
+/* .first {
     background-color: brown;
-}
+} */
 
 .second {
-    background-color: blueviolet;
+    padding: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+    .content-div {
+        flex-direction: column-reverse;
+    }
+
+    .half {
+        width: 100%;
+    }
+}
+
+.content-div {
+    margin-top: 5rem;
 }
