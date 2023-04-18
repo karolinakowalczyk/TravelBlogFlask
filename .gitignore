@@ -25,3 +25,4 @@ htmlcov/
 node_modules/
 
 src/config.py
+src/secret.json

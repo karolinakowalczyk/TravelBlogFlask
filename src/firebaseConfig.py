@@ -1,4 +1,7 @@
 import pyrebase
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 from . import app
 from src.config import SECRET_KEY
 
@@ -17,8 +20,30 @@ config = {
 firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 
-app.secret_key =  SECRET_KEY #change for real secret
+# db = firebase.database()
+
+# storage = firebase.storage()
+
+app.secret_key = SECRET_KEY  # change for real secret
+
 
 def getAuth():
     return auth
 
+
+cred = credentials.Certificate("src/secret.json")
+firebase_auth = firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+# data = {"title": "Italy trip", "author": "John Smith", "hashtag": "#Italy",
+#         "photoUrl": "https://images.pexels.com/photos/2064827/pexels-photo-2064827.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"}
+# doc_ref = db.collection('posts').document()
+# doc_ref.set(data)
+
+
+def getDb():
+    return db
+
+
+# def getStorage():
+#     return storage
