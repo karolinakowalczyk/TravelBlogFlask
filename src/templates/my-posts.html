@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}
+My Posts
+{% endblock %}
+{% block content %}
+<div>
+    <h1>My Posts</h1>
+    <a class="btn btn-primary" href="{{ url_for('addPost') }}">Add post</a>
+</div>
+{% endblock %}

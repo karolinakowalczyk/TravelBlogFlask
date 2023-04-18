@@ -1,6 +1,11 @@
 from flask import Flask, session, render_template, request, redirect
 from . import app
 from .firebaseConfig import getAuth
+from .firebaseConfig import getDb
+
+
+auth = getAuth()
+db = getDb()
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -18,7 +23,6 @@ def register():
         email = request.form.get('email')
         password = request.form.get('password')
         try:
-            auth = getAuth()
             auth.create_user_with_email_and_password(email, password)
             print('Register successfully')
             return redirect('/login')
@@ -36,7 +40,6 @@ def login():
         email = request.form.get('email')
         password = request.form.get('password')
         try:
-            auth = getAuth()
             auth.sign_in_with_email_and_password(email, password)
             # print(auth.current_user)
             session['user'] = email
@@ -58,41 +61,16 @@ def logout():
     return redirect('/')
 
 
-# @app.route("/add-post", methods=['POST', 'GET'])
-# def register():
-#     # if request.method == 'POST':
-#     #     email = request.form.get('email')
-#     #     password = request.form.get('password')
-#     #     try:
-#     #         auth = getAuth()
-#     #         auth.create_user_with_email_and_password(email, password)
-#     #         print('Register successfully')
-#     #         return redirect('/login')
-#     #     except:
-#     #         print(auth.current_user)
-#     #         print('Failed to register')
-#     #         return redirect('/register')
-
-#     return render_template('addPost.html')
+@app.route("/my-posts", methods=['POST', 'GET'])
+def myPosts():
+    return render_template('my-posts.html')
 
 
-# @app.route("/about/")
-# def about():
-#     return render_template("about.html")
+@app.route("/add-post", methods=['POST', 'GET'])
+def addPost():
+    data = {"title": request.form.get(
+        'title'), "author": request.form.get('author')}
+    doc_ref = db.collection('posts').document()
+    doc_ref.set(data)
 
-# @app.route("/contact/")
-# def contact():
-#     return render_template("contact.html")
-
-# @app.route("/hello/")
-# @app.route("/hello/<name>")
-# def hello_there(name = None):
-#     return render_template(
-#         "hello_there.html",
-#         name=name,
-#         date=datetime.now()
-#     )
-
-# @app.route("/api/data")
-# def get_data():
-#     return app.send_static_file("data.json")
+    return render_template('add-post.html')
