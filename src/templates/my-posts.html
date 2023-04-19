@@ -6,5 +6,9 @@ My Posts
 <div>
     <h1>My Posts</h1>
     <a class="btn btn-primary" href="{{ url_for('addPost') }}">Add post</a>
+    {% for post in userPostsData %}
+    <p> {{ post["title"] }} </p>
+    <p> {{ post["author"] }} </p>
+    {% endfor %}
 </div>
 {% endblock %}

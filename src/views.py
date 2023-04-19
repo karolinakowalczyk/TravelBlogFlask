@@ -6,6 +6,7 @@ from .firebaseConfig import getDb
 
 auth = getAuth()
 db = getDb()
+currentUserId = 0
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -14,7 +15,7 @@ def home():
     if ('user' in session):
         print('Hi, {}'.format(session['user']))
         loggedUser = True
-    return render_template('home.html', loggedUser=loggedUser)
+    return render_template('home.html')
 
 
 @app.route("/register", methods=['POST', 'GET'])
@@ -42,6 +43,10 @@ def login():
         try:
             auth.sign_in_with_email_and_password(email, password)
             # print(auth.current_user)
+            listOfGlobals = globals()
+            listOfGlobals['currentUserId'] = auth.current_user['localId']
+            # currentUserId = auth.current_user['localId']
+            print(listOfGlobals['currentUserId'])
             session['user'] = email
             print('Log in successfully')
             return redirect('/')
@@ -56,6 +61,10 @@ def login():
 @app.route('/logout')
 def logout():
     if session.get('user') != None:
+        listOfGlobals = globals()
+        listOfGlobals['currentUserId'] = 0
+        # currentUserId = auth.current_user['localId']
+        print(listOfGlobals['currentUserId'])
         session.pop('user')
         print("Log out successfully")
     return redirect('/')
@@ -63,14 +72,24 @@ def logout():
 
 @app.route("/my-posts", methods=['POST', 'GET'])
 def myPosts():
-    return render_template('my-posts.html')
+    userPosts = db.collection('posts').where(
+        'userId', "==", globals()['currentUserId']).get()
+    userPostsData = []
+    print(userPosts)
+    for post in userPosts:
+        print(post.id)
+        print(post.to_dict())
+        userPostsData.append(post.to_dict())
+    for p in userPostsData:
+        print(p["title"])
+    print(userPostsData)
+    return render_template('my-posts.html', userPostsData=userPostsData)
 
 
 @app.route("/add-post", methods=['POST', 'GET'])
 def addPost():
-    data = {"title": request.form.get(
+    data = {"userId": globals()['currentUserId'], "title": request.form.get(
         'title'), "author": request.form.get('author')}
-    doc_ref = db.collection('posts').document()
-    doc_ref.set(data)
+    db.collection('posts').document().set(data)
 
     return render_template('add-post.html')
