@@ -2,19 +2,30 @@ from flask import Flask, session, render_template, request, redirect
 from . import app
 from .firebaseConfig import getAuth
 from .firebaseConfig import getDb
+from flask import jsonify
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+from flask_jwt_extended import set_access_cookies
+from flask_jwt_extended import unset_jwt_cookies
 
 
 auth = getAuth()
 db = getDb()
-currentUserId = 0
+# dbPosts = db.collection('posts').get()
+# posts = []
+# for post in posts:
+#     print(post.id)
+#     print(post.to_dict())
+#     posts.append(post.to_dict())
+# currentUserId = 0
 
 
 @app.route("/", methods=['POST', 'GET'])
 def home():
-    loggedUser = False
     if ('user' in session):
         print('Hi, {}'.format(session['user']))
-        loggedUser = True
+
     return render_template('home.html')
 
 
@@ -43,11 +54,12 @@ def login():
         try:
             auth.sign_in_with_email_and_password(email, password)
             # print(auth.current_user)
-            listOfGlobals = globals()
-            listOfGlobals['currentUserId'] = auth.current_user['localId']
+            # listOfGlobals = globals()
+            # listOfGlobals['currentUserId'] = auth.current_user['localId']
+            currentUserId = auth.current_user['localId']
             # currentUserId = auth.current_user['localId']
-            print(listOfGlobals['currentUserId'])
-            session['user'] = email
+            # print(listOfGlobals['currentUserId'])
+            session['user'] = currentUserId
             print('Log in successfully')
             return redirect('/')
         except:
@@ -72,8 +84,10 @@ def logout():
 
 @app.route("/my-posts", methods=['POST', 'GET'])
 def myPosts():
+
+    # nie widzi user id
     userPosts = db.collection('posts').where(
-        'userId', "==", globals()['currentUserId']).get()
+        'userId', "==", session['user']).get()
     userPostsData = []
     print(userPosts)
     for post in userPosts:
@@ -88,8 +102,14 @@ def myPosts():
 
 @app.route("/add-post", methods=['POST', 'GET'])
 def addPost():
-    data = {"userId": globals()['currentUserId'], "title": request.form.get(
-        'title'), "author": request.form.get('author')}
-    db.collection('posts').document().set(data)
+    if (request.form.get('title') != '' or request.form.get('author') != ''):
+        data = {"userId": session['user'], "title": request.form.get(
+            'title'), "author": request.form.get('author')}
+        print("want to add post")
+        db.collection('posts').document().set(data)
+        message = "Your post was added!"
 
-    return render_template('add-post.html')
+    else:
+        message = "Fill all required fields"
+
+    return render_template('add-post.html', message=message)

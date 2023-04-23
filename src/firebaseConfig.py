@@ -5,7 +5,6 @@ from firebase_admin import firestore
 from . import app
 from src.config import SECRET_KEY
 
-
 config = {
     'apiKey': "AIzaSyAW8hNJncjK9AZtKrCeGjKRiiUbyA0XoXc",
     'authDomain': "travelblog-b7941.firebaseapp.com",
