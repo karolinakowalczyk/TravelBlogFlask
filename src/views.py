@@ -1,4 +1,4 @@
-from flask import Flask, session, render_template, request, redirect
+from flask import Flask, session, render_template, request, redirect, flash
 from . import app
 from .firebaseConfig import getAuth
 from .firebaseConfig import getDb
@@ -8,6 +8,8 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import set_access_cookies
 from flask_jwt_extended import unset_jwt_cookies
+
+from src.forms.registrationForm import RegistrationForm
 
 
 auth = getAuth()
@@ -31,9 +33,13 @@ def home():
 
 @app.route("/register", methods=['POST', 'GET'])
 def register():
-    if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
+    registerForm = RegistrationForm(request.form)
+    if request.method == 'POST' and registerForm.validate():
+        # email = request.form.get('email')
+        # password = request.form.get('password')
+        email = registerForm.email.data
+        password = registerForm.password.data
+        print("form valid")
         try:
             auth.create_user_with_email_and_password(email, password)
             print('Register successfully')
@@ -43,7 +49,7 @@ def register():
             print('Failed to register')
             return redirect('/register')
 
-    return render_template('register.html')
+    return render_template('register.html', registerForm=registerForm)
 
 
 @app.route("/login", methods=['POST', 'GET'])

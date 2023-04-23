@@ -6,9 +6,24 @@ Login
 <div>
     <h1>Register</h1>
     <form action="/register" method="POST">
-        Email: <input type="text" name="email"><br>
-        Password: <input type="password" name="password">
-        <input type="submit">
+        <div>
+            <p>{{ registerForm.email.label }}</p>
+            <div>{{ registerForm.email }}</div>
+        </div>
+        <div>
+            <p>{{ registerForm.password.label }}</p>
+            <div>{{ registerForm.password }}</div>
+            {% if registerForm.password.errors %}
+            <ul>{% for error in registerForm.password.errors %}<li> {{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+        </div>
+        <div>
+            <p>{{ registerForm.confirm.label }}</p>
+            <div>{{ registerForm.confirm }}</div>
+        </div>
+
+
+        <input type="submit" value="Register">
     </form>
 </div>
 {% endblock %}
