@@ -1,0 +1,25 @@
+/* .hashtagEl {
+    pointer-events: none;
+    background-color: #242424;
+    color: white;
+    padding: 0.25em;
+    margin: 0.25em;
+}
+
+.hashtagEl::before {
+    pointer-events: all;
+    display: inline-block;
+    content: 'x';
+    height: 1em;
+    width: 1em;
+    margin-right: 0.25em;
+    text-align: center;
+    color: #ccc;
+    background-color: #111;
+    cursor: pointer;
+} */
+
+.hashtagBtn {
+    pointer-events: all;
+    cursor: pointer;
+}

@@ -93,15 +93,29 @@ def myPosts():
     # print(userPostsData)
     return render_template('my-posts.html', userPostsData=userPostsData)
 
+# TODOHow make it better?
+
 
 hashtags = []
 
 
 @app.route('/add-hashtag', methods=['POST'])
 def addHashtag():
+    global hashtags
     hashtag = request.get_json()
-    print(hashtag['hashtag'])
     hashtags.append(hashtag['hashtag'])
+    print("add hashtag")
+    print(hashtags)
+    return hashtags
+
+
+@app.route('/remove-hashtag', methods=['POST'])
+def removeHashtag():
+    global hashtags
+    hashtag = request.get_json()
+    hashtags.remove(hashtag['hashtag'])
+    print("remove hashtag")
+    print(hashtags)
     return hashtags
 
 
@@ -110,8 +124,8 @@ def addPost():
     addPostForm = AddPostForm(request.form)
     if request.method == 'POST' and addPostForm.validate():
         global hashtags
-        # print("HASHTAGS")
-        # print(hashtags)
+        print("HASHTAGS")
+        print(hashtags)
         data = {"userId": session['user'], "title": addPostForm.title.data,
                 "author": addPostForm.author.data, "hashtags": hashtags}
         print("want to add post")
