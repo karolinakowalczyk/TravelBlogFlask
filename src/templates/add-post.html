@@ -6,10 +6,18 @@ Add Post
 <div>
     <h1>Add Post Site</h1>
     <form action="/add-post" method="POST">
-        Title: <input type="text" name="title"><br>
-        Author: <input type="text" name="author">
-        <input type="submit" value="Dodaj">
+        <div>
+            <p>{{ addPostForm.title.label }}</p>
+            <div>{{ addPostForm.title }}</div>
+        </div>
+        <div>
+            <p>{{ addPostForm.author.label }}</p>
+            <div>{{ addPostForm.author }}</div>
+        </div>
+        <input type="text" id="hashtag-input" name="hashtag">
+        <div class="hashtags-container">
+        </div>
+        <input type="submit" value="Add">
     </form>
-    <p>{{message}}</p>
 </div>
 {% endblock %}

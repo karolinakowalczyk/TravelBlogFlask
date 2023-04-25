@@ -10,17 +10,15 @@ from flask_jwt_extended import set_access_cookies
 from flask_jwt_extended import unset_jwt_cookies
 
 from src.forms.registrationForm import RegistrationForm
+from src.forms.addPostForm import AddPostForm
 
 
 auth = getAuth()
 db = getDb()
-# dbPosts = db.collection('posts').get()
-# posts = []
 # for post in posts:
 #     print(post.id)
 #     print(post.to_dict())
 #     posts.append(post.to_dict())
-# currentUserId = 0
 
 
 @app.route("/", methods=['POST', 'GET'])
@@ -59,13 +57,7 @@ def login():
         password = request.form.get('password')
         try:
             auth.sign_in_with_email_and_password(email, password)
-            # print(auth.current_user)
-            # listOfGlobals = globals()
-            # listOfGlobals['currentUserId'] = auth.current_user['localId']
-            currentUserId = auth.current_user['localId']
-            # currentUserId = auth.current_user['localId']
-            # print(listOfGlobals['currentUserId'])
-            session['user'] = currentUserId
+            session['user'] = auth.current_user['localId']
             print('Log in successfully')
             return redirect('/')
         except:
@@ -79,10 +71,6 @@ def login():
 @app.route('/logout')
 def logout():
     if session.get('user') != None:
-        listOfGlobals = globals()
-        listOfGlobals['currentUserId'] = 0
-        # currentUserId = auth.current_user['localId']
-        print(listOfGlobals['currentUserId'])
         session.pop('user')
         print("Log out successfully")
     return redirect('/')
@@ -97,25 +85,44 @@ def myPosts():
     userPostsData = []
     print(userPosts)
     for post in userPosts:
-        print(post.id)
-        print(post.to_dict())
+        # print(post.id)
+        # print(post.to_dict())
         userPostsData.append(post.to_dict())
-    for p in userPostsData:
-        print(p["title"])
-    print(userPostsData)
+    # for p in userPostsData:
+    #     print(p["title"])
+    # print(userPostsData)
     return render_template('my-posts.html', userPostsData=userPostsData)
+
+
+hashtags = []
+
+
+@app.route('/add-hashtag', methods=['POST'])
+def addHashtag():
+    hashtag = request.get_json()
+    print(hashtag['hashtag'])
+    hashtags.append(hashtag['hashtag'])
+    return hashtags
 
 
 @app.route("/add-post", methods=['POST', 'GET'])
 def addPost():
-    if (request.form.get('title') != '' or request.form.get('author') != ''):
-        data = {"userId": session['user'], "title": request.form.get(
-            'title'), "author": request.form.get('author')}
+    addPostForm = AddPostForm(request.form)
+    if request.method == 'POST' and addPostForm.validate():
+        global hashtags
+        # print("HASHTAGS")
+        # print(hashtags)
+        data = {"userId": session['user'], "title": addPostForm.title.data,
+                "author": addPostForm.author.data, "hashtags": hashtags}
         print("want to add post")
         db.collection('posts').document().set(data)
+        hashtags = []
+
         message = "Your post was added!"
+
+        return redirect('/my-posts')
 
     else:
         message = "Fill all required fields"
 
-    return render_template('add-post.html', message=message)
+    return render_template('add-post.html', message=message, addPostForm=addPostForm)

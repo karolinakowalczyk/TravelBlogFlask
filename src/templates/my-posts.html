@@ -9,6 +9,9 @@ My Posts
     {% for post in userPostsData %}
     <p> {{ post["title"] }} </p>
     <p> {{ post["author"] }} </p>
+    {% for hashtag in post["hashtags"] %}
+    <p># {{hashtag}}</p>
+    {% endfor %}
     {% endfor %}
 </div>
 {% endblock %}
