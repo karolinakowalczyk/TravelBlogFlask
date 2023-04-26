@@ -1,20 +1,22 @@
-from flask import Flask, session, render_template, request, redirect, flash
+from flask import Flask, send_from_directory, session, render_template, request, redirect, flash, url_for
+
 from . import app
 from .firebaseConfig import getAuth
 from .firebaseConfig import getDb
-from flask import jsonify
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import jwt_required
-from flask_jwt_extended import JWTManager
-from flask_jwt_extended import set_access_cookies
-from flask_jwt_extended import unset_jwt_cookies
+from flask_uploads import IMAGES, UploadSet, configure_uploads
 
 from src.forms.registrationForm import RegistrationForm
 from src.forms.addPostForm import AddPostForm
 
+from werkzeug.utils import secure_filename
+
 
 auth = getAuth()
 db = getDb()
+
+app.config["UPLOADED_PHOTOS_DEST"] = 'uploads'
+photos = UploadSet('photos', IMAGES)
+configure_uploads(app, photos)
 # for post in posts:
 #     print(post.id)
 #     print(post.to_dict())
@@ -119,24 +121,70 @@ def removeHashtag():
     return hashtags
 
 
+@app.route('/uploads/<filename>')
+def getFile(filename):
+    return send_from_directory(app.config["UPLOADED_PHOTOS_DEST"], filename)
+
+
+# @app.route('/upload-image', methods=['POST', 'GET'])
+# def uploadImage():
+#     uploadImageForm = UploadImageForm()
+#     print('upload image')
+
+#     if uploadImageForm.validate():
+#         filename = photos.save(uploadImageForm.photo.data)
+#         fileUrl = url_for('getFile', filename)
+#     else:
+#         fileUrl = None
+#     return render_template('upload-image.html', uploadImageForm=uploadImageForm, fileUrl=fileUrl)
+
+filenames = []
+
+
 @app.route("/add-post", methods=['POST', 'GET'])
 def addPost():
-    addPostForm = AddPostForm(request.form)
+    # addPostForm = AddPostForm(request.form)
+    addPostForm = AddPostForm()
+
     if request.method == 'POST' and addPostForm.validate():
-        global hashtags
-        print("HASHTAGS")
-        print(hashtags)
-        data = {"userId": session['user'], "title": addPostForm.title.data,
-                "author": addPostForm.author.data, "hashtags": hashtags}
-        print("want to add post")
-        db.collection('posts').document().set(data)
-        hashtags = []
+        addSubmit = request.form.get("add")
+        uploadSubmit = request.form.get("upload")
+        global filenames
+        print("POST method")
+        if uploadSubmit is not None:
+            print("add photo")
+            image = addPostForm.images.data
+            print(image)
+            filename = photos.save(image)
 
-        message = "Your post was added!"
+            for image in addPostForm.images.data:
+                filename = photos.save(image)
+                filenames.append(filename)
+        elif addSubmit is not None:
+            # print(addPostForm.title.data)
+            # print(addPostForm.title)
+            # print("-----")
+            print("add post")
+            print(filenames)
+            # print("addsubmit")
+            # print(addSubmit)
+            # print("uploadsubmit")
+            # print(uploadSubmit)
 
-        return redirect('/my-posts')
+            global hashtags
+            # print("HASHTAGS")
+            # print(hashtags)
+            data = {"userId": session['user'], "title": addPostForm.title.data,
+                    "author": addPostForm.author.data, "hashtags": hashtags}
+
+            db.collection('posts').document().set(data)
+            hashtags = []
+
+            # message = "Your post was added!"
+            return redirect('/my-posts')
 
     else:
-        message = "Fill all required fields"
+        print("Fill all required fields")
+        # message = "Fill all required fields"
 
-    return render_template('add-post.html', message=message, addPostForm=addPostForm)
+    return render_template('add-post.html', addPostForm=addPostForm, filenames=filenames)

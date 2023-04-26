@@ -14,5 +14,12 @@ html * {
 }
 
 #site-body {
-    margin-top: 140px;
+    /* margin-top: 140px; */
+    margin-top: 8.75rem;
+}
+
+@media screen and (max-width: 785px) {
+    #site-body {
+        margin-top: 12rem;
+    }
 }
