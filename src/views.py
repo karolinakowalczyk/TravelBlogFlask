@@ -14,7 +14,8 @@ from werkzeug.utils import secure_filename
 auth = getAuth()
 db = getDb()
 
-app.config["UPLOADED_PHOTOS_DEST"] = 'uploads'
+# app.config["UPLOADED_PHOTOS_DEST"] = 'uploads'
+app.config["UPLOADED_PHOTOS_DEST"] = 'src/static/uploads'
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 # for post in posts:
@@ -121,11 +122,6 @@ def removeHashtag():
     return hashtags
 
 
-@app.route('/uploads/<filename>')
-def getFile(filename):
-    return send_from_directory(app.config["UPLOADED_PHOTOS_DEST"], filename)
-
-
 # @app.route('/upload-image', methods=['POST', 'GET'])
 # def uploadImage():
 #     uploadImageForm = UploadImageForm()
@@ -138,34 +134,45 @@ def getFile(filename):
 #         fileUrl = None
 #     return render_template('upload-image.html', uploadImageForm=uploadImageForm, fileUrl=fileUrl)
 
-filenames = []
+# filenames = []
+
+@app.route('/uploads/<filename>')
+def getFile(filename):
+    return send_from_directory(app.config["UPLOADED_PHOTOS_DEST"], filename)
 
 
 @app.route("/add-post", methods=['POST', 'GET'])
 def addPost():
+    global fileUrl
+    fileUrl = None
     # addPostForm = AddPostForm(request.form)
     addPostForm = AddPostForm()
 
     if request.method == 'POST' and addPostForm.validate():
         addSubmit = request.form.get("add")
         uploadSubmit = request.form.get("upload")
-        global filenames
         print("POST method")
         if uploadSubmit is not None:
             print("add photo")
+
             image = addPostForm.images.data
             print(image)
-            filename = photos.save(image)
-
-            for image in addPostForm.images.data:
+            if image is not None:
                 filename = photos.save(image)
-                filenames.append(filename)
+                fileUrl = url_for('getFile', filename=filename)
+            else:
+                fileUrl = None
+            # filenames.append(filename)
+
+            # for image in addPostForm.images.data:
+            #     filename = photos.save(image)
+            #     filenames.append(filename)
+
         elif addSubmit is not None:
             # print(addPostForm.title.data)
             # print(addPostForm.title)
             # print("-----")
-            print("add post")
-            print(filenames)
+
             # print("addsubmit")
             # print(addSubmit)
             # print("uploadsubmit")
@@ -186,5 +193,6 @@ def addPost():
     else:
         print("Fill all required fields")
         # message = "Fill all required fields"
-
-    return render_template('add-post.html', addPostForm=addPostForm, filenames=filenames)
+    print("fileUrl")
+    print(fileUrl)
+    return render_template('add-post.html', addPostForm=addPostForm, fileUrl=fileUrl)

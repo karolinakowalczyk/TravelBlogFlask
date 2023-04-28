@@ -28,11 +28,12 @@ Add Post
             {% endfor %}
             <button type="submit" name="upload">Upload</button>
         </div>
+
         <div class="form-group">
-            {% if filenames %}
-            {% for filename in filenames %}
-            <img src="{{ url_for('uploads', filename='/' + filename) }}" alt="{{ filename }}" height="100" />
-            {% endfor %}
+            {% if fileUrl %}
+            <div>
+                <img src="{{ url_for('static', filename=fileUrl)}}" class="sub-image main-image">
+            </div>
             {% endif %}
         </div>
         <button type="submit" name="add">Add</button>
