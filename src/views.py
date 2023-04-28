@@ -1,9 +1,11 @@
+import datetime
 from flask import Flask, send_from_directory, session, render_template, request, redirect, flash, url_for
 
 from . import app
-from .firebaseConfig import getAuth
-from .firebaseConfig import getDb
+from .firebaseConfig import getAuth, getDb, getBucket
 from flask_uploads import IMAGES, UploadSet, configure_uploads
+import os
+
 
 from src.forms.registrationForm import RegistrationForm
 from src.forms.addPostForm import AddPostForm
@@ -13,9 +15,14 @@ from werkzeug.utils import secure_filename
 
 auth = getAuth()
 db = getDb()
+bucket = getBucket()
+
+
+absolutePath = os.path.dirname(__file__)
 
 # app.config["UPLOADED_PHOTOS_DEST"] = 'uploads'
 app.config["UPLOADED_PHOTOS_DEST"] = 'src/static/uploads'
+
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
 # for post in posts:
@@ -24,7 +31,7 @@ configure_uploads(app, photos)
 #     posts.append(post.to_dict())
 
 
-@app.route("/", methods=['POST', 'GET'])
+@ app.route("/", methods=['POST', 'GET'])
 def home():
     if ('user' in session):
         print('Hi, {}'.format(session['user']))
@@ -32,7 +39,7 @@ def home():
     return render_template('home.html')
 
 
-@app.route("/register", methods=['POST', 'GET'])
+@ app.route("/register", methods=['POST', 'GET'])
 def register():
     registerForm = RegistrationForm(request.form)
     if request.method == 'POST' and registerForm.validate():
@@ -53,7 +60,7 @@ def register():
     return render_template('register.html', registerForm=registerForm)
 
 
-@app.route("/login", methods=['POST', 'GET'])
+@ app.route("/login", methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -71,7 +78,7 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/logout')
+@ app.route('/logout')
 def logout():
     if session.get('user') != None:
         session.pop('user')
@@ -79,7 +86,7 @@ def logout():
     return redirect('/')
 
 
-@app.route("/my-posts", methods=['POST', 'GET'])
+@ app.route("/my-posts", methods=['POST', 'GET'])
 def myPosts():
 
     # nie widzi user id
@@ -87,22 +94,26 @@ def myPosts():
         'userId', "==", session['user']).get()
     userPostsData = []
     print(userPosts)
+
     for post in userPosts:
-        # print(post.id)
-        # print(post.to_dict())
         userPostsData.append(post.to_dict())
-    # for p in userPostsData:
-    #     print(p["title"])
-    # print(userPostsData)
+    for p in userPostsData:
+        if p["image"]:
+            blob = bucket.get_blob("images/" + p["image"])
+            imageUrl = blob.generate_signed_url(
+                expiration=datetime.timedelta(
+                    days=365))
+            p["image"] = imageUrl
     return render_template('my-posts.html', userPostsData=userPostsData)
 
 # TODOHow make it better?
 
 
 hashtags = []
+filename = None
 
 
-@app.route('/add-hashtag', methods=['POST'])
+@ app.route('/add-hashtag', methods=['POST'])
 def addHashtag():
     global hashtags
     hashtag = request.get_json()
@@ -112,7 +123,7 @@ def addHashtag():
     return hashtags
 
 
-@app.route('/remove-hashtag', methods=['POST'])
+@ app.route('/remove-hashtag', methods=['POST'])
 def removeHashtag():
     global hashtags
     hashtag = request.get_json()
@@ -122,77 +133,52 @@ def removeHashtag():
     return hashtags
 
 
-# @app.route('/upload-image', methods=['POST', 'GET'])
-# def uploadImage():
-#     uploadImageForm = UploadImageForm()
-#     print('upload image')
-
-#     if uploadImageForm.validate():
-#         filename = photos.save(uploadImageForm.photo.data)
-#         fileUrl = url_for('getFile', filename)
-#     else:
-#         fileUrl = None
-#     return render_template('upload-image.html', uploadImageForm=uploadImageForm, fileUrl=fileUrl)
-
-# filenames = []
-
-@app.route('/uploads/<filename>')
+@ app.route('/uploads/<filename>')
 def getFile(filename):
     return send_from_directory(app.config["UPLOADED_PHOTOS_DEST"], filename)
 
 
-@app.route("/add-post", methods=['POST', 'GET'])
+@ app.route("/add-post", methods=['POST', 'GET'])
 def addPost():
     global fileUrl
     fileUrl = None
-    # addPostForm = AddPostForm(request.form)
+    global filename
     addPostForm = AddPostForm()
 
     if request.method == 'POST' and addPostForm.validate():
         addSubmit = request.form.get("add")
         uploadSubmit = request.form.get("upload")
-        print("POST method")
         if uploadSubmit is not None:
             print("add photo")
 
             image = addPostForm.images.data
-            print(image)
             if image is not None:
+
                 filename = photos.save(image)
+                print('storage')
+                blob = bucket.blob('images/' + filename)
+                blob.upload_from_filename(
+                    absolutePath + '\\static\\uploads\\' + filename)
+                print("uploaded")
+                blob.make_public()
+
                 fileUrl = url_for('getFile', filename=filename)
             else:
                 fileUrl = None
-            # filenames.append(filename)
-
-            # for image in addPostForm.images.data:
-            #     filename = photos.save(image)
-            #     filenames.append(filename)
 
         elif addSubmit is not None:
-            # print(addPostForm.title.data)
-            # print(addPostForm.title)
-            # print("-----")
-
-            # print("addsubmit")
-            # print(addSubmit)
-            # print("uploadsubmit")
-            # print(uploadSubmit)
-
             global hashtags
-            # print("HASHTAGS")
-            # print(hashtags)
+            print('filename')
+            print(filename)
+
             data = {"userId": session['user'], "title": addPostForm.title.data,
-                    "author": addPostForm.author.data, "hashtags": hashtags}
+                    "author": addPostForm.author.data, "hashtags": hashtags, "image": filename}
 
             db.collection('posts').document().set(data)
             hashtags = []
-
-            # message = "Your post was added!"
             return redirect('/my-posts')
 
     else:
         print("Fill all required fields")
-        # message = "Fill all required fields"
-    print("fileUrl")
-    print(fileUrl)
+
     return render_template('add-post.html', addPostForm=addPostForm, fileUrl=fileUrl)

@@ -2,6 +2,7 @@ import pyrebase
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from firebase_admin import storage
 from . import app
 from src.config import SECRET_KEY
 
@@ -31,7 +32,8 @@ def getAuth():
 
 
 cred = credentials.Certificate("src/secret.json")
-firebase_auth = firebase_admin.initialize_app(cred)
+firebase_auth = firebase_admin.initialize_app(
+    cred, {'storageBucket': "travelblog-b7941.appspot.com"})
 
 db = firestore.client()
 # data = {"title": "Italy trip", "author": "John Smith", "hashtag": "#Italy",
@@ -40,9 +42,22 @@ db = firestore.client()
 # doc_ref.set(data)
 
 
+# Opt : if you want to make public access from the URL
+# blob.make_public()
+
+
 def getDb():
     return db
 
 
+# fileName = "E:/masterThesisProjects/travelBlogFlask/src/tree.jpg"
+bucket = storage.bucket()
+# blob = bucket.blob('images')
+# blob.upload_from_filename(fileName)
+# print("uploaded")
+
+
+def getBucket():
+    return bucket
 # def getStorage():
 #     return storage

@@ -12,6 +12,9 @@ My Posts
     {% for hashtag in post["hashtags"] %}
     <p># {{hashtag}}</p>
     {% endfor %}
+    {% if post["image"] %}
+    <img src={{post["image"]}} class="sub-image main-image">
+    {% endif %}
     {% endfor %}
 </div>
 {% endblock %}
