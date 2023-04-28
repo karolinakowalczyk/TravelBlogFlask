@@ -3,40 +3,51 @@
 Add Post
 {% endblock %}
 {% block content %}
-<div>
-    <h1>Add Post Site</h1>
+<div class="container">
+    <h1 class="pb-2 page-header">Add Post</h1>
     <form action="/add-post" method="POST" enctype="multipart/form-data">
         {{ addPostForm.hidden_tag() }}
-        <div class="form-group">
-            {{ addPostForm.title.label }}
-            {{ addPostForm.title }}
-            {% for error in addPostForm.title.errors %}
-            <span style="color: red;">{{ error }}</span>
-            {% endfor %}
+
+        <div class="form-group py-2">
+            <label for="title">{{ addPostForm.title.label }}</label>
+            {{ addPostForm.title(class_='form-control') }}
         </div>
-        <div>
-            <p>{{ addPostForm.author.label }}</p>
-            <div>{{ addPostForm.author }}</div>
+        {% for error in addPostForm.title.errors %}
+        <span class="error">{{ error }}</span>
+        {% endfor %}
+        <div class="form-group py-2">
+            <label for="title">{{ addPostForm.author.label }}</label>
+            {{ addPostForm.author(class_='form-control') }}
         </div>
-        <input type="text" id="hashtag-input" name="hashtag">
-        <div class="hashtags-container">
+        {% for error in addPostForm.author.errors %}
+        <span class="error">{{ error }}</span>
+        {% endfor %}
+        <div class="form-group py-2">
+            <label for="content">{{ addPostForm.content.label }}</label>
+            {{ addPostForm.content(class_='form-control content-area')}}
         </div>
-        <div class="form-group">
-            {{ addPostForm.images.label }} {{ addPostForm.images }}
+        <div class="form-group py-2">
+            {{ addPostForm.images.label }} {{ addPostForm.images(class_="form-control") }}
             {% for error in addPostForm.images.errors %}
-            <span style="color: red;">{{ error }}</span>
+            <span class="error">{{ error }}</span>
             {% endfor %}
-            <button type="submit" name="upload">Upload</button>
+            <button class="main-btn mt-2 prevent-submit p-2" type="submit" name="upload">Upload</button>
         </div>
 
-        <div class="form-group">
+        <div class="form-group py-2">
             {% if fileUrl %}
             <div>
-                <img src="{{ url_for('static', filename=fileUrl)}}" class="sub-image main-image">
+                <img src="{{ url_for('static', filename=fileUrl)}}" class="uploaded-img">
             </div>
             {% endif %}
         </div>
-        <button type="submit" name="add">Add</button>
+        <div class="form-group py-2">
+            <label for="hashtag">Hashtags:</label>
+            <input class="form-control" type="text" id="hashtag-input" name="hashtag">
+            <div class="d-flex flex-row flex-wrap hashtags-container">
+            </div>
+        </div>
+        <button type="submit" name="add" class="main-btn prevent-submit p-2">Add</button>
     </form>
 </div>
 {% endblock %}

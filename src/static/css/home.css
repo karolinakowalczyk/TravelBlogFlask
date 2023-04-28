@@ -1,3 +1,7 @@
+:root {
+    --primary: #F46F4C;
+}
+
 .main-image {
     width: 100%;
     height: auto;
@@ -17,6 +21,19 @@ h1 {
     color: white;
     width: 10rem;
     border: none;
+}
+
+.main-href {
+    text-decoration: none;
+    color: white;
+}
+
+.page-header {
+    text-align: center;
+}
+
+.my-post-card {
+    width: 18rem;
 }
 
 /* @media screen and (min-width: 768px) {

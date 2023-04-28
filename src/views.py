@@ -143,6 +143,8 @@ def addPost():
     global fileUrl
     fileUrl = None
     global filename
+
+    # hashtags = []
     addPostForm = AddPostForm()
 
     if request.method == 'POST' and addPostForm.validate():
@@ -155,11 +157,14 @@ def addPost():
             if image is not None:
 
                 filename = photos.save(image)
+                print('-------------------------')
+                print(image)
+                print(filename)
+                print
                 print('storage')
                 blob = bucket.blob('images/' + filename)
                 blob.upload_from_filename(
                     absolutePath + '\\static\\uploads\\' + filename)
-                print("uploaded")
                 blob.make_public()
 
                 fileUrl = url_for('getFile', filename=filename)
@@ -168,14 +173,12 @@ def addPost():
 
         elif addSubmit is not None:
             global hashtags
-            print('filename')
-            print(filename)
-
             data = {"userId": session['user'], "title": addPostForm.title.data,
-                    "author": addPostForm.author.data, "hashtags": hashtags, "image": filename}
+                    "author": addPostForm.author.data, "content": addPostForm.content.data, "hashtags": hashtags, "image": filename}
 
             db.collection('posts').document().set(data)
             hashtags = []
+            filename = []
             return redirect('/my-posts')
 
     else:

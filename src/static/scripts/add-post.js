@@ -1,4 +1,9 @@
+let addPostForm = document.getElementsByClassName('content-area');
+
 document.addEventListener("keypress", function (e) {
+    if (e.target.tagName === "TEXTAREA") {
+        return true;
+    }
     if (e.keyCode === 13 || e.which === 13) {
         e.preventDefault();
         return false;
@@ -8,8 +13,10 @@ document.addEventListener("keypress", function (e) {
 
 let hashtagInput = document.querySelector('#hashtag-input');
 let hashtagsContainer = document.querySelector('.hashtags-container');
-let deleteTagBtn = document.querySelectorAll('.hashtagBtn');
-let deleteTags = document.querySelectorAll('.hashtagEl');
+let deleteTagBtn = document.querySelectorAll('.hashtag-btn');
+let deleteTags = document.querySelectorAll('.hashtag-el');
+
+
 
 function addHashTag(URL, requestOptions) {
     fetch(URL, requestOptions)
@@ -23,11 +30,13 @@ function removeHashTag(URL, requestOptions) {
         .catch((err) => console.log(err))
 }
 
+
 if (hashtagInput) {
+
     hashtagInput.addEventListener("keypress", function (event) {
         if (event.keyCode === 13 && hashtagInput.value.length > 0) {
             let hashValue = (hashtagInput.value);
-            let hashText = document.createTextNode(hashValue);
+            let hashText = document.createTextNode('#' + hashValue);
             let hashButtonText = document.createTextNode("X");
             let hashDiv = document.createElement('div');
             let hashParagraph = document.createElement('p');
@@ -37,8 +46,10 @@ if (hashtagInput) {
             hashDiv.appendChild(hashParagraph);
             hashDiv.appendChild(hashButton);
             hashParagraph.appendChild(hashText);
-            hashDiv.classList.add('hashtagEl');
-            hashButton.classList.add('hashtagBtn');
+            hashDiv.classList.add('hashtag-el');
+            hashButton.classList.add('hashtag-btn');
+            hashParagraph.classList.add('hashtag-p');
+
             let requestOptions = {
                 method: "POST",
                 headers: {
@@ -50,8 +61,6 @@ if (hashtagInput) {
             }
 
             hashButton.addEventListener('click', () => {
-                console.log('clicked')
-                console.log(hashDiv)
                 hashtagsContainer.removeChild(hashDiv);
                 removeHashTag('/remove-hashtag', requestOptions)
             })
