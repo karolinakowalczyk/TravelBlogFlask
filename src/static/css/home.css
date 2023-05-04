@@ -1,0 +1,69 @@
+:root {
+    --primary: #F46F4C;
+}
+
+.main-image {
+    width: 100%;
+    height: auto;
+}
+
+.cropped {
+    overflow: hidden;
+}
+
+h1 {
+    color: var(--primary);
+    font-family: 'Playfair Display', serif;
+}
+
+.main-btn {
+    background-color: var(--primary);
+    color: white;
+    width: 10rem;
+    border: none;
+}
+
+.main-href {
+    text-decoration: none;
+    color: white;
+}
+
+.page-header {
+    text-align: center;
+}
+
+.my-post-card {
+    width: 18rem;
+}
+
+/* @media screen and (min-width: 768px) {
+    .half {
+        width: 50%;
+    }
+} */
+
+.half {
+    width: 50%;
+}
+
+/* .first {
+    background-color: brown;
+} */
+
+.second {
+    padding: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+    .content-div {
+        flex-direction: column-reverse;
+    }
+
+    .half {
+        width: 100%;
+    }
+}
+
+.content-div {
+    margin-top: 5rem;
+}
