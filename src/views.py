@@ -25,16 +25,12 @@ app.config["UPLOADED_PHOTOS_DEST"] = 'src/static/uploads'
 
 photos = UploadSet('photos', IMAGES)
 configure_uploads(app, photos)
-# for post in posts:
-#     print(post.id)
-#     print(post.to_dict())
-#     posts.append(post.to_dict())
 
 
 @ app.route("/", methods=['POST', 'GET'])
 def home():
-    if ('user' in session):
-        print('Hi, {}'.format(session['user']))
+    # if ('user' in session):
+    #     print('Hi, {}'.format(session['user']))
 
     return render_template('home.html')
 
@@ -47,14 +43,14 @@ def register():
         # password = request.form.get('password')
         email = registerForm.email.data
         password = registerForm.password.data
-        print("form valid")
+        # print("form valid")
         try:
             auth.create_user_with_email_and_password(email, password)
-            print('Register successfully')
+            # print('Register successfully')
             return redirect('/login')
         except:
-            print(auth.current_user)
-            print('Failed to register')
+            # print(auth.current_user)
+            # print('Failed to register')
             return redirect('/register')
 
     return render_template('register.html', registerForm=registerForm)
@@ -68,11 +64,11 @@ def login():
         try:
             auth.sign_in_with_email_and_password(email, password)
             session['user'] = auth.current_user['localId']
-            print('Log in successfully')
+            # print('Log in successfully')
             return redirect('/')
         except:
-            print(auth.current_user)
-            print('Failed to log in')
+            # print(auth.current_user)
+            # print('Failed to log in')
             return redirect('/login')
 
     return render_template('login.html')
@@ -82,7 +78,7 @@ def login():
 def logout():
     if session.get('user') != None:
         session.pop('user')
-        print("Log out successfully")
+        # print("Log out successfully")
     return redirect('/')
 
 
@@ -93,7 +89,7 @@ def myPosts():
     userPosts = db.collection('posts').where(
         'userId', "==", session['user']).get()
     userPostsData = []
-    print(userPosts)
+    # print(userPosts)
 
     for post in userPosts:
         userPostsData.append(post.to_dict())
@@ -118,8 +114,8 @@ def addHashtag():
     global hashtags
     hashtag = request.get_json()
     hashtags.append(hashtag['hashtag'])
-    print("add hashtag")
-    print(hashtags)
+    # print("add hashtag")
+    # print(hashtags)
     return hashtags
 
 
@@ -128,8 +124,8 @@ def removeHashtag():
     global hashtags
     hashtag = request.get_json()
     hashtags.remove(hashtag['hashtag'])
-    print("remove hashtag")
-    print(hashtags)
+    # print("remove hashtag")
+    # print(hashtags)
     return hashtags
 
 
@@ -151,17 +147,12 @@ def addPost():
         addSubmit = request.form.get("add")
         uploadSubmit = request.form.get("upload")
         if uploadSubmit is not None:
-            print("add photo")
+            # print("add photo")
 
             image = addPostForm.images.data
             if image is not None:
 
                 filename = photos.save(image)
-                print('-------------------------')
-                print(image)
-                print(filename)
-                print
-                print('storage')
                 blob = bucket.blob('images/' + filename)
                 blob.upload_from_filename(
                     absolutePath + '\\static\\uploads\\' + filename)
@@ -181,7 +172,7 @@ def addPost():
             filename = []
             return redirect('/my-posts')
 
-    else:
-        print("Fill all required fields")
+    # else:
+    #     print("Fill all required fields")
 
     return render_template('add-post.html', addPostForm=addPostForm, fileUrl=fileUrl)
