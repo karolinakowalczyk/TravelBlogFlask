@@ -4,7 +4,6 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import storage
 from . import app
-from src.config import SECRET_KEY
 
 config = {
     'apiKey': "AIzaSyAW8hNJncjK9AZtKrCeGjKRiiUbyA0XoXc",
@@ -24,7 +23,7 @@ auth = firebase.auth()
 
 # storage = firebase.storage()
 
-app.secret_key = SECRET_KEY  # change for real secret
+app.secret_key = 'secret'  # change for real secret
 
 
 def getAuth():

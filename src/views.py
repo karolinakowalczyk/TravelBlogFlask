@@ -10,8 +10,6 @@ import os
 from src.forms.registrationForm import RegistrationForm
 from src.forms.addPostForm import AddPostForm
 
-from werkzeug.utils import secure_filename
-
 
 auth = getAuth()
 db = getDb()
