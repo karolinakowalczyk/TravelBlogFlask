@@ -16,7 +16,7 @@ db = getDb()
 bucket = getBucket()
 
 
-absolutePath = os.path.dirname(__file__)
+#absolutePath = os.path.dirname(__file__)
 
 # app.config["UPLOADED_PHOTOS_DEST"] = 'uploads'
 app.config["UPLOADED_PHOTOS_DEST"] = 'src/static/uploads'
@@ -152,9 +152,10 @@ def addPost():
 
                 filename = photos.save(image)
                 blob = bucket.blob('images/' + filename)
-                blob.upload_from_filename(
-                    absolutePath + '\\static\\uploads\\' + filename)
-                blob.make_public()
+                # print(absolutePath)
+                # blob.upload_from_filename(
+                #     absolutePath + '\\static\\uploads\\' + filename)
+                # blob.make_public()
 
                 fileUrl = url_for('getFile', filename=filename)
             else:
