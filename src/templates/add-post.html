@@ -16,7 +16,7 @@ Add Post
         <span class="error">{{ error }}</span>
         {% endfor %}
         <div class="form-group py-2">
-            <label for="title">{{ addPostForm.author.label }}</label>
+            <label for="author">{{ addPostForm.author.label }}</label>
             {{ addPostForm.author(class_='form-control') }}
         </div>
         {% for error in addPostForm.author.errors %}

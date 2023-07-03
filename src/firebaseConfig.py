@@ -23,7 +23,7 @@ auth = firebase.auth()
 
 # storage = firebase.storage()
 
-app.secret_key = 'secret'  # change for real secret
+app.secret_key = 'secret'  # change for real secret with .env
 
 
 def getAuth():
