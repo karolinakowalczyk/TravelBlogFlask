@@ -7,8 +7,8 @@ from flask_uploads import IMAGES, UploadSet, configure_uploads
 import os
 
 
-from src.forms.registrationForm import RegistrationForm
-from src.forms.addPostForm import AddPostForm
+from forms.registrationForm import RegistrationForm
+from forms.addPostForm import AddPostForm
 
 
 auth = getAuth()

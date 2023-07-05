@@ -30,7 +30,7 @@ def getAuth():
     return auth
 
 
-cred = credentials.Certificate("src/secret.json")
+cred = credentials.Certificate("secret.json")
 firebase_auth = firebase_admin.initialize_app(
     cred, {'storageBucket': "travelblog-b7941.appspot.com"})
 
