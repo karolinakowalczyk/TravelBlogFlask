@@ -1,8 +1,8 @@
 import datetime
-from flask import Flask, send_from_directory, session, render_template, request, redirect, flash, url_for
+from flask import Blueprint, Flask, send_from_directory, session, render_template, request, redirect, flash, url_for
 
-from . import app
-from .firebaseConfig import getAuth, getDb, getBucket
+#from . import app
+from firebaseConfig import getAuth, getDb, getBucket
 from flask_uploads import IMAGES, UploadSet, configure_uploads
 import os
 
@@ -18,22 +18,20 @@ bucket = getBucket()
 
 absolutePath = os.path.dirname(__file__)
 
-# app.config["UPLOADED_PHOTOS_DEST"] = 'uploads'
-app.config["UPLOADED_PHOTOS_DEST"] = 'src/static/uploads'
-
-photos = UploadSet('photos', IMAGES)
-configure_uploads(app, photos)
+site = Blueprint('site', __name__, static_folder="static", template_folder='templates')
 
 
-@ app.route("/", methods=['POST', 'GET'])
+# app.config["UPLOADED_PHOTOS_DEST"] = 'src/static/uploads'
+
+# photos = UploadSet('photos', IMAGES)
+# configure_uploads(app, photos)
+
+@site.route("/")
 def home():
-    # if ('user' in session):
-    #     print('Hi, {}'.format(session['user']))
-
     return render_template('home.html')
 
 
-@ app.route("/register", methods=['POST', 'GET'])
+@ site.route("/register", methods=['POST', 'GET'])
 def register():
     registerForm = RegistrationForm(request.form)
     if request.method == 'POST' and registerForm.validate():
@@ -54,7 +52,7 @@ def register():
     return render_template('register.html', registerForm=registerForm)
 
 
-@ app.route("/login", methods=['POST', 'GET'])
+@ site.route("/login", methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -72,7 +70,7 @@ def login():
     return render_template('login.html')
 
 
-@ app.route('/logout')
+@ site.route('/logout')
 def logout():
     if session.get('user') != None:
         session.pop('user')
@@ -80,7 +78,7 @@ def logout():
     return redirect('/')
 
 
-@ app.route("/my-posts", methods=['POST', 'GET'])
+@ site.route("/my-posts", methods=['POST', 'GET'])
 def myPosts():
 
     # nie widzi user id
@@ -107,7 +105,7 @@ hashtags = []
 filename = None
 
 
-@ app.route('/add-hashtag', methods=['POST'])
+@ site.route('/add-hashtag', methods=['POST'])
 def addHashtag():
     global hashtags
     hashtag = request.get_json()
@@ -117,7 +115,7 @@ def addHashtag():
     return hashtags
 
 
-@ app.route('/remove-hashtag', methods=['POST'])
+@ site.route('/remove-hashtag', methods=['POST'])
 def removeHashtag():
     global hashtags
     hashtag = request.get_json()
@@ -127,12 +125,13 @@ def removeHashtag():
     return hashtags
 
 
-@ app.route('/uploads/<filename>')
+@ site.route('/uploads/<filename>')
 def getFile(filename):
-    return send_from_directory(app.config["UPLOADED_PHOTOS_DEST"], filename)
+    #return send_from_directory(app.config["UPLOADED_PHOTOS_DEST"], filename)
+    return send_from_directory('test.jpg', filename)
 
 
-@ app.route("/add-post", methods=['POST', 'GET'])
+@ site.route("/add-post", methods=['POST', 'GET'])
 def addPost():
     global fileUrl
     fileUrl = None
@@ -150,13 +149,14 @@ def addPost():
             image = addPostForm.images.data
             if image is not None:
 
-                filename = photos.save(image)
-                blob = bucket.blob('images/' + filename)
-                blob.upload_from_filename(
-                    absolutePath + '\\static\\uploads\\' + filename)
-                blob.make_public()
+                # filename = photos.save(image)
+                # blob = bucket.blob('images/' + filename)
+                # blob.upload_from_filename(
+                #     absolutePath + '\\static\\uploads\\' + filename)
+                # blob.make_public()
 
-                fileUrl = url_for('getFile', filename=filename)
+                # fileUrl = url_for('getFile', filename=filename)
+                fileUrl = "yes"
             else:
                 fileUrl = None
 
