@@ -6,7 +6,7 @@ My Posts
 <div class="container d-flex flex-column align-items-center">
     <h1>My Posts</h1>
     <button class="main-btn p-3">
-        <a class="main-href" href="{{ url_for('addPost') }}">Add new post</a>
+        <a class="main-href" href="{{ url_for('site.addPost') }}">Add new post</a>
     </button>
     <div class="d-flex flex-wrap">
         {% for post in userPostsData %}

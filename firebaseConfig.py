@@ -3,7 +3,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from firebase_admin import storage
-from . import app
+#from . import app
 
 config = {
     'apiKey': "AIzaSyAW8hNJncjK9AZtKrCeGjKRiiUbyA0XoXc",
@@ -23,7 +23,7 @@ auth = firebase.auth()
 
 # storage = firebase.storage()
 
-app.secret_key = 'secret'  # change for real secret with .env
+#app.secret_key = 'secret'  # change for real secret with .env
 
 
 def getAuth():

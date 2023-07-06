@@ -22,7 +22,8 @@
     <div class="body-content">
         <nav class="navbar navbar-expand-sm navbar-light fixed-top bg-light p-5">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ url_for('home') }}">360 <span>&#176;</span> TRAVEL INSPIRATIONS</a>
+                <a class="navbar-brand" href="{{ url_for('site.home') }}">360 <span>&#176;</span> TRAVEL
+                    INSPIRATIONS</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -30,7 +31,7 @@
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('home') }}">Home</a>
+                            <a class="nav-link" href="{{ url_for('site.home') }}">Home</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">About</a>
@@ -40,17 +41,17 @@
                         </li>
                         {% if session.user %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('myPosts') }}">My Posts</a>
+                            <a class="nav-link" href="{{ url_for('site.myPosts') }}">My Posts</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('logout') }}">Log out</a>
+                            <a class="nav-link" href="{{ url_for('site.logout') }}">Log out</a>
                         </li>
                         {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                            <a class="nav-link" href="{{ url_for('site.login') }}">Login</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('register') }}">Register</a>
+                            <a class="nav-link" href="{{ url_for('site.register') }}">Register</a>
                         </li>
                         {% endif %}
                     </ul>
